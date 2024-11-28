@@ -77,8 +77,8 @@ def generate_random_curve_parameters(driver, pre_origin, post_destination):
             or min_height > pre_origin[1]
             or max_height < pre_origin[1]
     ):
-        offset_boundary_x = 0
-        offset_boundary_y = 0
+        offset_boundary_x = 1
+        offset_boundary_y = 1
         knots_count = 1
     if (
             min_width > post_destination[0]
@@ -86,8 +86,8 @@ def generate_random_curve_parameters(driver, pre_origin, post_destination):
             or min_height > post_destination[1]
             or max_height < post_destination[1]
     ):
-        offset_boundary_x = 0
-        offset_boundary_y = 0
+        offset_boundary_x = 1
+        offset_boundary_y = 1
         knots_count = 1
 
     return (

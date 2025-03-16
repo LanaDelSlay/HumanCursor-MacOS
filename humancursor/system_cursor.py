@@ -1,6 +1,8 @@
 from time import sleep
 import random
 import pyautogui
+from Quartz.CoreGraphics import CGEventCreateMouseEvent, kCGEventMouseMoved, kCGMouseButtonLeft, CGEventPost, kCGHIDEventTap
+import AppKit
 
 from humancursor.utilities.human_curve_generator import HumanizeMouseTrajectory
 from humancursor.utilities.calculate_and_randomize import generate_random_curve_parameters
@@ -15,7 +17,7 @@ class SystemCursor:
     @staticmethod
     def move_to(point: list or tuple, duration: int or float = None, human_curve=None, steady=False):
         """Moves to certain coordinates of screen"""
-        from_point = pyautogui.position()
+        from_point = AppKit.NSEvent.mouseLocation()
 
         if not human_curve:
             (
@@ -48,10 +50,12 @@ class SystemCursor:
 
         if duration is None:
             duration = random.uniform(0.5, 2.0)
-        pyautogui.PAUSE = duration / len(human_curve.points)
+        delay = duration / len(human_curve.points)
         for pnt in human_curve.points:
-            pyautogui.moveTo(pnt)
-        pyautogui.moveTo(point)
+            event = CGEventCreateMouseEvent(None, kCGEventMouseMoved, (pnt[0], pnt[1]), kCGMouseButtonLeft)
+            CGEventPost(kCGHIDEventTap, event)
+            sleep(delay)
+        CGEventPost(kCGHIDEventTap, CGEventCreateMouseEvent(None, kCGEventMouseMoved, (point[0], point[1]), kCGMouseButtonLeft))
 
     def click_on(self, point: list or tuple, clicks: int = 1, click_duration: int or float = 0, steady=False):
         """Clicks a specified number of times, on the specified coordinates"""

@@ -9,10 +9,6 @@ from humancursor.utilities.calculate_and_randomize import generate_random_curve_
 
 
 class SystemCursor:
-    def __init__(self):
-        pyautogui.MINIMUM_DURATION = 0
-        pyautogui.MINIMUM_SLEEP = 0
-        pyautogui.PAUSE = 0
 
     @staticmethod
     def move_to(point: list or tuple, duration: int or float = None, human_curve=None, steady=False):
@@ -61,9 +57,9 @@ class SystemCursor:
         """Clicks a specified number of times, on the specified coordinates"""
         self.move_to(point, steady=steady)
         for _ in range(clicks):
-            pyautogui.mouseDown()
+            self.mouse_down()
             sleep(click_duration)
-            pyautogui.mouseUp()
+            self.mouse_down()
             sleep(random.uniform(0.170, 0.280))
 
     def drag_and_drop(self, from_point: list or tuple, to_point: list or tuple, duration: int or float or [float, float] or (float, float) = None, steady=False):
@@ -76,6 +72,20 @@ class SystemCursor:
             first_duration = second_duration = None
 
         self.move_to(from_point, duration=first_duration)
-        pyautogui.mouseDown()
+        self.mouse_down()
         self.move_to(to_point, duration=second_duration, steady=steady)
-        pyautogui.mouseUp()
+        self.mouse_down()
+
+    def mouse_down():
+        current_location = AppKit.NSEvent.mouseLocation()
+        screen_height = AppKit.NSScreen.mainScreen().frame().size.height
+        corrected_y = screen_height - current_location.y
+        event = CGEventCreateMouseEvent(None, kCGEventLeftMouseDown, (current_location.x, corrected_y), kCGMouseButtonLeft)
+        CGEventPost(kCGHIDEventTap, event)
+
+    def mouse_up():
+        current_location = AppKit.NSEvent.mouseLocation()
+        screen_height = AppKit.NSScreen.mainScreen().frame().size.height
+        corrected_y = screen_height - current_location.y
+        event = CGEventCreateMouseEvent(None, kCGEventLeftMouseUp, (current_location.x, corrected_y), kCGMouseButtonLeft)
+        CGEventPost(kCGHIDEventTap, event)
